@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\QuestionStoreRequest;
 use App\Question;
 
 class QuestionController extends Controller
@@ -22,9 +23,10 @@ class QuestionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(request $request)
     {
-        //
+        
+        return view ('questions.create');
     }
 
     /**
@@ -33,9 +35,16 @@ class QuestionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(request $request)
     {
-        //
+        
+        $validatedData = $request->validate([
+            'title' => 'required|max:50',
+            'text' => 'required',
+        ]);
+        
+        $question= Question::create($request->all());
+        return redirect()->back()->with('message' , 'Question posted');
     }
 
     /**
@@ -44,9 +53,10 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Question $question)
     {
-        //
+        
+        return view('questions.show' , compact('question'));
     }
 
     /**
@@ -67,9 +77,14 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Question $question)
     {
-        //
+        foreach ($request->answer as $answer){
+
+            $question->answers()->create(['body'=> $answer]);
+            return redirect()->back();
+
+        }
     }
 
     /**
