@@ -81,7 +81,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                <img src="images/q&a.jpeg" alt="Q&A" >
                 </div>
 
                 <div class="links">
