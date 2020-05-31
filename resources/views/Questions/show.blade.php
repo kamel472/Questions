@@ -19,6 +19,16 @@
   </div>
 </div>
 
+<div class="container" style="padding-top:15px;" >
+
+  <div class="row" style="padding:10px;">
+  
+    <div >
+<span>{{$user->name}}</span>
+</div>
+  </div>
+</div>
+
 <div class="container" style="padding:10px; background:#B2BABB; ">
   <div class="row">
     <div class="col-9">

@@ -9,5 +9,7 @@ class Answer extends Model
     protected $fillable = [
         'body', 'question_id'
     ];
+
+    
     
 }

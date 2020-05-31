@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\QuestionStoreRequest;
 use App\Question;
+use App\User;
 
 class QuestionController extends Controller
 {
@@ -43,7 +44,7 @@ class QuestionController extends Controller
             'text' => 'required',
         ]);
         
-        $question= Question::create($request->all());
+        auth()->user()->questions()->create($request->all());
         return redirect()->back()->with('message' , 'Question posted');
     }
 
@@ -55,8 +56,9 @@ class QuestionController extends Controller
      */
     public function show(Question $question)
     {
-        
-        return view('questions.show' , compact('question'));
+        $user = $question->user;
+
+        return view('questions.show' , compact('question' , 'user'));
     }
 
     /**
