@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::resource('questions', 'QuestionController');
 
+Route::get('/users', 'UserController@show')->name('user.show');
+
+
 Route::get('/', function () {
     return view('welcome');
 });

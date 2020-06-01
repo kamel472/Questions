@@ -1,13 +1,30 @@
 @extends('layouts.questions')
 
 @section('body')
-<div class="container" style="padding:10px; background:#B2BABB; ">
+
+<div class="container" style="padding:15px; background:#B2BABB; ">
   <div class="row">
     <div class="col-9">
-<h2>{{$question->title}}<h1>
+    <h4 >{{$question->title}} </h4>
+    </div>
+    @if(auth()->user())
+    @if($question->user_id == auth()->user()->id)
+    <div class="col-3">
+    <form  method="post" action="{{route('questions.destroy', $question->id)}}">
+        @csrf
+        @method('delete')
+        <input type="submit" class="btn btn-danger" value=" Delete Question">
+        </form>
+    @endif 
+    @endif    
+    
+
+    
+    </div>
+  </div>
 </div>
-</div>
-</div>
+
+
 
 <div class="container" style="padding-top:15px;" >
 
@@ -24,7 +41,7 @@
   <div class="row" style="padding:10px;">
   
     <div >
-<span>{{$user->name}}</span>
+<span>{{$userAsked->name}}</span>
 </div>
   </div>
 </div>
@@ -34,6 +51,19 @@
     <div class="col-9">
 @foreach($question->answers as $answer)    
 <p>{{$answer->body}}<p>
+<p>{{$answer->user->name}}<p>
+<br>
+@if($answer->user->id == auth()->user()->id)
+<div class="col-3">
+    <form  method="post" action="">
+        @csrf
+        @method('delete')
+        <input type="submit" class="btn btn-danger" value=" Delete Answer">
+        </form>
+    </div>
+  </div>
+</div>
+@endif
 <br>
 @endforeach
 </div>

@@ -45,7 +45,7 @@ class QuestionController extends Controller
         ]);
         
         auth()->user()->questions()->create($request->all());
-        return redirect()->back()->with('message' , 'Question posted');
+        return redirect('questions/')->with('message' , 'Question posted');
     }
 
     /**
@@ -56,9 +56,10 @@ class QuestionController extends Controller
      */
     public function show(Question $question)
     {
-        $user = $question->user;
+        
+        $userAsked = $question->user;
 
-        return view('questions.show' , compact('question' , 'user'));
+        return view('questions.show' , compact('question' , 'userAsked' ));
     }
 
     /**
@@ -83,7 +84,9 @@ class QuestionController extends Controller
     {
         foreach ($request->answer as $answer){
 
-            $question->answers()->create(['body'=> $answer]);
+            $id= auth()->user()->id;
+
+            $question->answers()->create(['body'=> $answer , 'user_id'=> $id]);
             return redirect()->back();
 
         }
@@ -95,8 +98,13 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Question $question)
     {
-        //
+        $question->answers->each->delete();
+        $question->delete();
+
+        return redirect('questions/');
+
+
     }
 }
