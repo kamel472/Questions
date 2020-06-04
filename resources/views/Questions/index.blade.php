@@ -1,43 +1,43 @@
 @extends('layouts.questions')
 
 @section('body')
-    
-<div class="container" style="padding:15px; background:#B2BABB; ">
-  <div class="row">
-    <div class="col-9">
-    <h4 >Questions </h4>
-    </div>
-    <div class="col-3">
-    <a class="btn btn-primary" href="{{route('questions.create')}}" role="button" >Ask question</a>
-    </div>
-  </div>
-</div>
-        <x-alert/>
-        
-        @foreach ($questions as $question)   
-<div class="container" style="padding-top:15px;" >
 
-  <div class="row" style="padding:10px;">
-  
-    <div >
-        <a href="{{route('questions.show' , $question->id)}}"> {{ $question->title}} </a>
-         
-    </div>
-  </div>
+<!--/.Card-->
+
+<!--Card-->
+<div class="card mb-4 wow fadeIn">
+
+<!--Card content-->
+<div class="card-header" style=" padding-bottom:2px;" >
+<h3 style="font-family:Impact;">Questions</h3>
+<p >{{$questions->count()}} Questions Asked</p>
+</div>
+<x-alert/>
+
+<div class="card-body" >
+@foreach ($questions as $question)
+<div style="border-bottom: 1px solid #D3D3D3; padding:5px;" >
+<p class="h5 "><a href="{{route('questions.show' , $question->id)}}">{{ $question->title}}</a> </p>
+<br>
+<div class="container">
+<div class="row">
+<div class="col-8">
+<small>{{$question->answers->count()}} Answers</small>
+</div>
+<div class="col-4">
+<small >
+<a href="{{route('users.show' , $question->user_id)}}"> 
+<img src="{{ asset('storage/images/'.$question->user->avatar) }}" alt="image" style="width:20px;">
+{{ $question->user->name}}</a></small>
+
+</div>
+</div>
 </div>
 
+</div>   
+<br>
 @endforeach 
+</div>
+
+<!--/.Card-->
 @endsection
-                
-                
-    
-
-
-
-
-
-
-
-
-
-

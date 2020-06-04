@@ -14,15 +14,26 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+Route::post('questions/{id}' , 'QuestionController@addAnswer' )->name('questions.addAnswer');
 Route::resource('questions', 'QuestionController');
 
-Route::get('/users', 'UserController@show')->name('user.show');
+
+
+Route::delete('/answers/{answer}', 'AnswerController@destroy')->name('answers.destroy');
+Route::patch('/answers/{id}', 'AnswerController@update')->name('answers.update');
+
+
+Route::resource('users', 'UserController');
+
 
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Auth::routes();
+
+

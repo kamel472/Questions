@@ -5,10 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\QuestionStoreRequest;
 use App\Question;
+use App\Answer;
 use App\User;
+use Validator;
 
 class QuestionController extends Controller
 {
+    
+    public function __construct()
+    {
+        $this->middleware('auth')->except('index' , 'show');
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -39,13 +47,15 @@ class QuestionController extends Controller
     public function store(request $request)
     {
         
-        $validatedData = $request->validate([
-            'title' => 'required|max:50',
-            'text' => 'required',
-        ]);
         
+
         auth()->user()->questions()->create($request->all());
         return redirect('questions/')->with('message' , 'Question posted');
+
+        
+        
+        
+        
     }
 
     /**
@@ -68,9 +78,9 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Question $question)
     {
-        //
+        return view('questions.edit' , compact ('question') );
     }
 
     /**
@@ -82,14 +92,8 @@ class QuestionController extends Controller
      */
     public function update(Request $request, Question $question)
     {
-        foreach ($request->answer as $answer){
-
-            $id= auth()->user()->id;
-
-            $question->answers()->create(['body'=> $answer , 'user_id'=> $id]);
-            return redirect()->back();
-
-        }
+        $question->update(['title'=> $request->title , 'text'=> $request->text ]);
+        return redirect()->route('questions.show', ['question' => $question->id]); 
     }
 
     /**
@@ -106,5 +110,18 @@ class QuestionController extends Controller
         return redirect('questions/');
 
 
+    }
+
+    public function addAnswer (Request $request, $id)
+    {
+        foreach ($request->answer as $answer){
+
+            $userId= auth()->user()->id;
+           
+
+            Answer::create(['body'=> $answer , 'user_id'=> $userId , 'question_id'=>$id]);
+            return redirect()->back();
+
+        }
     }
 }
