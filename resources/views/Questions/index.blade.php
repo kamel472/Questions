@@ -5,7 +5,7 @@
 <!--/.Card-->
 
 <!--Card-->
-<div class="card mb-4 wow fadeIn">
+<div class="card mb-4 wow fadeIn" style="width:800px; margin:0 auto;">
 
 <!--Card content-->
 <div class="card-header" style=" padding-bottom:2px;" >
@@ -17,7 +17,15 @@
 <div class="card-body" >
 @foreach ($questions as $question)
 <div style="border-bottom: 1px solid #D3D3D3; padding:5px;" >
-<p class="h5 "><a href="{{route('questions.show' , $question->id)}}">{{ $question->title}}</a> </p>
+<small >Asked By:
+<a href="{{route('users.show' , $question->user_id)}}"> 
+{{ $question->user->name}}</a></small>
+<br>
+<a href="{{route('questions.show' , $question->id)}}">    
+<p class="h4 " style="font-family:Arial;color:black;font-weight:bold;">{{ $question->title}}</p>
+
+<p style="font-family:Arial;color:black;">{{\Illuminate\Support\Str::limit($question->text,150,'...')}}</p></a> 
+
 <br>
 <div class="container">
 <div class="row">
@@ -25,10 +33,7 @@
 <small>{{$question->answers->count()}} Answers</small>
 </div>
 <div class="col-4">
-<small >
-<a href="{{route('users.show' , $question->user_id)}}"> 
-<img src="{{ asset('storage/images/'.$question->user->avatar) }}" alt="image" style="width:20px;">
-{{ $question->user->name}}</a></small>
+
 
 </div>
 </div>

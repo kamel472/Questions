@@ -123,5 +123,18 @@ class QuestionController extends Controller
             return redirect()->back();
 
         }
+
+    }    
+
+        public function updateAnswer (Request $request, $id)
+    {
+        
+        
+        Answer::where('id' , $id)->update(['body'=> $request->body]);
+        return redirect()->back();
+
+
+
+        
     }
 }

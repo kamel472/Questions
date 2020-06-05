@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::post('questions/{id}' , 'QuestionController@addAnswer' )->name('questions.addAnswer');
+Route::patch('questions/{id}' , 'QuestionController@updateAnswer' )->name('questions.updateAnswer');
 Route::resource('questions', 'QuestionController');
 
 
