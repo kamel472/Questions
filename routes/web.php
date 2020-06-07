@@ -22,6 +22,10 @@ Route::resource('questions', 'QuestionController');
 
 Route::delete('/answers/{answer}', 'AnswerController@destroy')->name('answers.destroy');
 Route::patch('/answers/{id}', 'AnswerController@update')->name('answers.update');
+Route::post('answers/{id}' , 'AnswerController@addComment' )->name('answers.addComment');
+Route::patch('answers/{id}' , 'AnswerController@updateComment' )->name('answers.updateComment');
+
+Route::delete('/comments/{comment}', 'CommentController@destroy')->name('comments.destroy');
 
 
 Route::resource('users', 'UserController');
