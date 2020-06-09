@@ -12,145 +12,147 @@ use Validator;
 
 class QuestionController extends Controller
 {
-    
-    public function __construct()
-    {
-        $this->middleware('auth')->except('index' , 'show');
-    }
-    
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {   $questions = Question::paginate(10);
-        $questionsCount = Question::all()->count();
-        return view ('questions.index' , compact('questions' , 'questionsCount'));
-    }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(request $request)
-    {
-        
-        return view ('questions.create');
-    }
+public function __construct()
+{
+$this->middleware('auth')->except('index');
+}
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(request $request)
-    {
-        
-        
+/**
+ * Display a listing of the resource.
+ *
+ * @return \Illuminate\Http\Response
+ */
+public function index()
+{   
+    $questions = Question::paginate(5);
+    $questionsCount = Question::all()->count();
+    return view ('questions.index' , compact('questions' , 'questionsCount'));
+}
 
-        auth()->user()->questions()->create($request->all());
-        return redirect('questions/')->with('message' , 'Question posted');
+/**
+ * Show the form for creating a new resource.
+ *
+ * @return \Illuminate\Http\Response
+ */
+public function create(request $request)
+{
 
-        
-        
-        
-        
-    }
+    return view ('questions.create');
+}
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Question $question)
-    {
-        
-        $userAsked = $question->user;
+/**
+ * Store a newly created resource in storage.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @return \Illuminate\Http\Response
+ */
+public function store(request $request)
+{
 
-        $answers= $question->answers()->paginate(10);
+    $request->validate([
+        'title' => ['required', 'max:100'],
+        'text' => ['required']
+    ]);
 
+    auth()->user()->questions()->create($request->all());
+    return redirect('questions/')->with('message' , 'Question posted');
 
-        return view('questions.show' , compact('question' , 'userAsked' , 'answers'  ));
-    }
+}
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Question $question)
-    {
-        return view('questions.edit' , compact ('question') );
-    }
+/**
+ * Display the specified resource.
+ *
+ * @param  int  $id
+ * @return \Illuminate\Http\Response
+ */
+public function show(Question $question)
+{
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-   
-    public function update(Request $request, Question $question)
-    {
-        
-        $question->update(['title'=> $request->title , 'text'=> $request->text ]);
-        return redirect()->route('questions.show', ['question' => $question->id]); 
-    }
+    $userAsked = $question->user;
+    $answers= $question->answers()->paginate(5);
+    return view('questions.show' , compact('question' , 'userAsked' , 'answers'  ));
+}
+
+/**
+ * Show the form for editing the specified resource.
+ *
+ * @param  int  $id
+ * @return \Illuminate\Http\Response
+ */
+public function edit(Question $question)
+{
+     
     
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Question $question)
-    {
-        
-       foreach ($question->answers as $answer){
-        
-        $answer->comments->each->delete();
-        
-       }
-        
-        $question->answers->each->delete();
-        $question->delete();
+    return view('questions.edit' , compact ('question') );
+}
 
-        return redirect('questions/');
+/**
+ * Update the specified resource in storage.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @param  int  $id
+ * @return \Illuminate\Http\Response
+ */
 
+public function update(Request $request, Question $question)
+{
 
-    }
-
-    public function addAnswer (Request $request, $id)
-    {
-        foreach ($request->answer as $answer){
-
-            $userId= auth()->user()->id;
-           
-
-            Answer::create(['body'=> $answer , 'user_id'=> $userId , 'question_id'=>$id , 
-            'approved'=>0 , 'rating'=>0]);
-            return redirect()->back();
-
-        }
-
-    }    
-
-        public function updateAnswer (Request $request, $id)
-    {
-        
-        
-        Answer::where('id' , $id)->update(['body'=> $request->body]);
-        return redirect()->back();
+    $request->validate([
+        'title' => ['required', 'max:100'],
+        'body' => ['required']
+    ]);
+    $question->update(['title'=> $request->title , 'text'=> $request->text ]);
+    return redirect()->route('questions.show', ['question' => $question->id])
+    ->with('message' , 'Question updated '); 
+}
 
 
+/**
+ * Remove the specified resource from storage.
+ *
+ * @param  int  $id
+ * @return \Illuminate\Http\Response
+ */
+public function destroy(Question $question)
+{
 
-        
-    }
+foreach ($question->answers as $answer){
+    $answer->comments->each->delete();
+}
+
+    $question->answers->each->delete();
+    $question->delete();
+
+    return redirect('questions/')->with('message' , 'Question deleted');
+
+
+}
+
+public function addAnswer (Request $request, $id)
+{
+foreach ($request->answer as $answer){
+
+
+    $userId= auth()->user()->id;
+    Answer::create(['body'=> $answer , 'user_id'=> $userId , 'question_id'=>$id , 
+    'approved'=>0 , 'rating'=>0]);
+    return redirect()->back()->with('message' , 'Answer Added');
+
+}
+
+}    
+
+public function updateAnswer (Request $request, $id)
+{
+
+    $request->validate([
+        'body' => ['required']
+    ]);
+
+    Answer::where('id' , $id)->update(['body'=> $request->body]);
+    return redirect()->back()->with('message' , 'Answer updated '); 
+}
+
 }

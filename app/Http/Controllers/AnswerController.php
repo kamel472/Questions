@@ -16,7 +16,7 @@ class AnswerController extends Controller
     {
         $answer->comments->each->delete();
         $answer->delete();
-        return redirect()->back();
+        return redirect()->back()->with('message' , 'Answer Deleted');
 
 
     }
@@ -24,10 +24,14 @@ class AnswerController extends Controller
     public function addComment (Request $request, $id)
     {
         
-        
+        $request->validate([
+            
+            'body' => ['required']
+        ]);
+
         $userId= auth()->user()->id;
         Comment::create(['body'=> $request->body,  'user_id'=>$userId , 'answer_id'=>$id  ]);
-        return redirect()->back();
+        return redirect()->back()->with('message' , 'comment posted');
 
         
 
@@ -35,10 +39,13 @@ class AnswerController extends Controller
 
         public function updateComment (Request $request, $id)
     {
-        
+        $request->validate([
+            
+            'body' => ['required']
+        ]);
         
         Comment::where('id' , $id)->update(['body'=> $request->body]);
-        return redirect()->back();
+        return redirect()->back()->with('message' , 'Comment updated');
    
     }
 

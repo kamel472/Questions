@@ -77,6 +77,11 @@ class UserController extends Controller
     {
         $name = $request->name;
         $email= $request->email;
+
+        $request->validate([
+            'name' => ['required'],
+            'email' => ['required']
+        ]);
         
         
         if($request->hasFile('image')){
@@ -96,7 +101,7 @@ class UserController extends Controller
             $user->update(['name'=>$name , 'email'=>$email]);
         }
         
-        return view('users.show' , compact('user'));
+        return redirect()->back()->with('message' , 'data updated successfully');
     }
 
     /**

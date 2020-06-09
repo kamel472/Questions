@@ -1,12 +1,13 @@
 @extends('layouts.questions')
 
 @section('body')
+
 <div class="container">
 <div class="row justify-content-center">
 <div class="col-md-8">
 <div class="card">
 <div class="card-header">Update Your Data</div>
-
+<x-alert/>
 <div class="card-body">
 
 <div class="row">
@@ -15,12 +16,12 @@
 @csrf
 @method('patch')
 <p>Name:</p>
-<input type="text" id="replyFormEmail" name="name" value="{{$user->name}}"
-    class="form-control">
+<input type="text" id="replyFormEmail" name="name" value="{{$user->name}}" 
+    class="form-control" required>
 
 
 <p>E-Mail:</p>
-<input type="email" id="replyFormEmail" name="email" value="{{$user->email}}"class="form-control">
+<input type="email" id="replyFormEmail" name="email" value="{{$user->email}}"class="form-control" required>
 <br>
 <input type="submit" class="btn btn-success btn-sm" value="Update">
 </div>

@@ -15,8 +15,11 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::resource('questions', 'QuestionController');
-Route::post('questions/{id}' , 'QuestionController@addAnswer' )->name('questions.addAnswer');
-Route::patch('questions/{id}' , 'QuestionController@updateAnswer' )->name('questions.updateAnswer');
+Route::patch('questions/updateAnswer/{id}' , 'QuestionController@updateAnswer' )->name('questions.updateAnswer');
+Route::post('questions/addAnswer/{id}' , 'QuestionController@addAnswer' )->name('questions.addAnswer');
+
+
+
 
 
 
@@ -33,6 +36,10 @@ Route::patch('answers/{id}' , 'AnswerController@updateComment' )->name('answers.
 
 
 Route::delete('/comments/{comment}', 'CommentController@destroy')->name('comments.destroy');
+
+
+
+
 
 
 Route::resource('users', 'UserController');
