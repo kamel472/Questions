@@ -9,4 +9,8 @@ class Comment extends Model
     protected $fillable = [
         'body','answer_id','user_id'
     ];
+
+    public function user() {
+        return $this->belongsTo('App\User');
+    }
 }

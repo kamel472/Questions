@@ -23,6 +23,11 @@
 
 <!-- Fontawsome --> 
 <script src="https://kit.fontawesome.com/e2b5f74269.js" crossorigin="anonymous"></script>
+
+@livewireStyles
+
+
+
 </head>
 
 <!--Main Navigation-->
@@ -65,7 +70,7 @@ aria-expanded="false" aria-label="Toggle navigation">
 
 
 <!-- Right Side Of Navbar -->
-<ul class="navbar-nav ml-auto">
+
     <!-- Authentication Links -->
     @guest
         <li class="nav-item">
@@ -78,18 +83,18 @@ aria-expanded="false" aria-label="Toggle navigation">
         @endif
     @else
 
-        <li class="nav-item dropdown">
-            <a id="navbarDropdown" class="nav-link dropdown-toggle" style="color:white" href="#" role="button" 
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+
+
+    <div class="dropdown">
+    <a class="dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             @if(Auth::user()->avatar)
                     <img src="{{ asset('storage/images/'. Auth::user()->avatar) }}" alt="image" style="width:30px; height:30px;">
                 @else
                   <img src="{{ asset('storage/images/default.png') }}" alt="image" style="width:30px; height:30px;">
                 @endif    
             </a>
-
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{{ route('logout') }}"
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+  <a class="dropdown-item" href="{{ route('logout') }}"
                     onclick="event.preventDefault();
                                     document.getElementById('logout-form').submit();">
                     {{ __('Logout') }}
@@ -98,11 +103,17 @@ aria-expanded="false" aria-label="Toggle navigation">
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
                 </form>
-            </div>
-            
-        </li>
+    <a class="dropdown-item" href="{{route('users.show' , auth()->user()->id)}}">Your Profile</a>
+    
+  </div>
+</div>
+
+
+
+
+
     @endguest
-</ul>
+
 </div>
 </div>
 

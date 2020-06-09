@@ -14,16 +14,23 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+Route::resource('questions', 'QuestionController');
 Route::post('questions/{id}' , 'QuestionController@addAnswer' )->name('questions.addAnswer');
 Route::patch('questions/{id}' , 'QuestionController@updateAnswer' )->name('questions.updateAnswer');
-Route::resource('questions', 'QuestionController');
+
 
 
 
 Route::delete('/answers/{answer}', 'AnswerController@destroy')->name('answers.destroy');
 Route::patch('/answers/{id}', 'AnswerController@update')->name('answers.update');
+Route::patch('/answers/{answer}', 'AnswerController@approve')->name('answers.approve');
 Route::post('answers/{id}' , 'AnswerController@addComment' )->name('answers.addComment');
 Route::patch('answers/{id}' , 'AnswerController@updateComment' )->name('answers.updateComment');
+
+
+
+
+
 
 Route::delete('/comments/{comment}', 'CommentController@destroy')->name('comments.destroy');
 

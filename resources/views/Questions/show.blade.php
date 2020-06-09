@@ -2,81 +2,124 @@
 
 @section('body')
 
+@livewireScripts
+
 <!--/.Card-->
 
-<!--Card-->
-<div class="card mb-4 wow fadeIn" style="width:800px; margin:0 auto;">
+    <!--Card-->
+    <div class="card mb-4 wow fadeIn">
 
-<!--Card content-->
+    <!--Card content-->
+    
+    <div  class="card-body text-center text-md-left ml-md-3 ml-0">
+    
+    <div class="row">
+    <div class="col-10">
+  
+    <p class="h5 ">{{$question->title}}</p>
+    <p>{{$question->text}}</p>
+    <small >
+        <a href="{{route('users.show' , $question->user_id)}}"> 
+            @if($question->user->avatar)
+            <img src="{{ asset('storage/images/'.$question->user->avatar) }}" alt="image" style="width:20px;">
+            @else
+            <img src="{{ asset('storage/images/default.png') }}" alt="image" style="width:20px;">
+            @endif
+         {{ $question->user->name}}</a></small>
+    </div>
+    @if(auth()->user())
+    @if($question->user_id == auth()->user()->id)
 
-<div  class="card-body text-center text-md-left ml-md-3 ml-0">
+    <div class="modal fade" id="modalEditQuestion{{$question->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Edit Your Question</h4>
+        <form action="{{route('questions.update', $question->id)}}" method="post">
+        @csrf
+        @method('patch')
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body mx-3">
+        <div class="md-form">
+        <i class="fas fa-pencil prefix grey-text"></i>
+        <input type="text" id="form8" value="{{$question->title}}"name="title" class="md-textarea form-control" 
+        rows="4" required></input>
+        <textarea type="text" id="form8" value=""name="text" class="md-textarea form-control" 
+        rows="4" required>{{$question->text}}</textarea>
+        <label data-error="wrong" data-success="right" for="form8"></label>
+        </div>
+        
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+        <button class="btn btn-info btn-sm">update </button>
+        </form>
+        </div>
+        </div>
+        </div>
+        </div>
 
-<div class="row">
+    <div class="col-1">
+    
+        <span class="fas fa-edit" style="color: orange; " 
+        data-toggle="modal" data-target="#modalEditQuestion{{$question->id}}"></span>
+    </div>
 
-<div class="col-10">
-<p class="h3 " style="font-family:Arial;color:black;">{{$question->title}}</p>
-<p style="font-family:Arial;color:black;">{{$question->text}}</p>
+    
+    <div class="col-1">
+    <form  method="post" action="{{route('questions.destroy', $question->id)}}" id="question-destroy">
+    @csrf
+    @method('delete')
+    <span class="fas fa-trash" style="color: red; cursor: pointer;"
+    onclick="event.preventDefault();
+        if(confirm('Do you really want to delete?')){
+            document.getElementById('question-destroy')
+        .submit() }"></span>
+        </form>
+        </div>
 
+    
+    @endif 
+    @endif    
+    
+  </div>
+    
+    </div>
+    </div>
+    <!--/.Card-->
 
-
-<small >
-<a href="{{route('users.show' , $question->user_id)}}"> 
-
-@if($question->user->avatar)
-                    <img src="{{ asset('storage/images/'.$question->user->avatar) }}" alt="image" style="width:20px;">
-                @else
-                  <img src="{{ asset('storage/images/default.png') }}" alt="image" style="width:20px;">
-                @endif    
-{{ $question->user->name}}</a></small>
-
-
-</div>
-@if(auth()->user())
-@if($question->user_id == auth()->user()->id)
-
-<div class="col-1">
-<a href="{{route('questions.edit', $question->id)}}" style="color: orange; " >
-<span class="fas fa-edit"></span></a>
-</div>
-
-
-<div class="col-1">
-<form  method="post" action="{{route('questions.destroy', $question->id)}}" id="question-destroy">
-@csrf
-@method('delete')
-<span class="fas fa-trash" style="color: red; cursor: pointer;"
-onclick="event.preventDefault();
-if(confirm('Do you really want to delete?')){
-document.getElementById('question-destroy')
-.submit() }"></span>
-</form>
-</div>
+    <!--Comments-->
+    <div class="card card-comments mb-3 wow fadeIn">
+    <div class="card-header font-weight-bold">Answers</div>
+    <div class="card-body" >
+    <div class="media d-block d-md-flex ">
+    <div class="media-body text-center text-md-left ml-md-3 ml-0">
 
 
-@endif 
-@endif    
+    @foreach($answers->sortByDesc('created_at') as $answer)                            
+    <div class="row" style="border-bottom: 1px solid rgb(184, 170, 170); padding:25px;" >
 
-</div>
+    <div class="col-1" >
+     
+    @if(auth()->user()->id == $question->user_id)
+    <livewire:approve :answer="$answer"> 
+    @else
 
-</div>
-</div>
-<!--/.Card-->
+    @if($answer->approved == 1)
+    <i class="fa fa-check" aria-hidden="true" style="color: green;" ></i>
+    @else
+    <i class="fa fa-check" aria-hidden="true" ></i>
+    @endif
 
-<!--Comments-->
-<div class="card card-comments mb-3 wow fadeIn" style="width:800px; margin:0 auto;">
-<div class="card-header font-weight-bold">Answers</div>
-<div class="card-body" >
-<div class="media d-block d-md-flex ">
-<div class="media-body text-center text-md-left ml-md-3 ml-0">
+    @endif   
+    </div>
 
-
-
-@foreach($question->answers as $answer)    
-<div class="row" style="border-bottom: 1px solid #D3D3D3;" >
-
-<div class="col-9" style="border-bottom: 1px solid #D3D3D3; padding:25px;" >
-<p>{{$answer->body}}</p>
-<small >
+    <div class="col-8" >
+    <p>{{$answer->body}}</p>
+    <small >
 <a href="{{route('users.show' , $answer->user_id)}}"> 
 @if($answer->user->avatar)
 <img src="{{ asset('storage/images/'.$answer->user->avatar) }}" alt="image" style="width:20px;">
@@ -117,16 +160,14 @@ aria-hidden="true">
 </div>
 </div>
 <div class="text-center">
-<span class="fas fa-comments" style="color: blue;" 
+<span class="fas fa-comments" style="color: blue;cursor: pointer;" 
 data-toggle="modal" data-target="#modalAddComment{{$answer->id}}"></span>
 </div>
 </div>
+    @if($answer->user->id == auth()->user()->id)
 
-
-
-@if($answer->user->id == auth()->user()->id)
-<div class="col-1">
-<div class="modal fade" id="modalEditAnswer{{$answer->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    <div class="col-1">
+    <div class="modal fade" id="modalEditAnswer{{$answer->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
 aria-hidden="true">
 <div class="modal-dialog" role="document">
 <div class="modal-content">
@@ -154,43 +195,60 @@ aria-hidden="true">
 </div>
 </div>
 </div>
-<div class="text-center">
-<span class="fas fa-edit" style="color: orange;" 
+
+<span class="fas fa-edit" style="color: orange; cursor: pointer;" 
 data-toggle="modal" data-target="#modalEditAnswer{{$answer->id}}"></span>
-</div>
-</div>
+    </div>
 
+    <div class="col-1">
+    <form  method="post" action="{{route('answers.destroy' , $answer->id)}}"
+    id="answer-destroy{{$answer->id}}">
+    @csrf
+    @method('delete')
+    <span class="fas fa-trash" style="color: red; cursor: pointer;"
+    onclick="event.preventDefault();
+    if(confirm('Do you really want to delete?')){
+        document.getElementById('answer-destroy{{$answer->id}}')
+    .submit() }"></span>
+    </form>
+    </div>
+    @endif
+    @endif
+    </div>
+    
+    
+@foreach ($answer->comments->sortByDesc('created_at') as $comment)
+<div style="border-bottom: 1px solid #D3D3D3;padding-left:10px; background:rgba(238, 235, 235, 0.884);">
+<small>{{ $comment->body}} -<a href="{{route('users.show' , $comment->user->id)}}"> {{$comment->user->name}}
+</a></small>
+<br>
+@if (auth()->user())
+@if ($comment->user->id == auth()->user()->id)
 
-<div class="col-1">
-<form  method="post" action="{{route('answers.destroy' , $answer->id)}}"
-id="answer-destroy">
+<div style="display: flex;">
+<a href="#modalEditComment{{$comment->id}}" data-toggle="modal" ><small>edit</small></a> &nbsp;&nbsp;
+
+<form  method="post" action="{{route('comments.destroy' , $comment->id)}}"
+id="comment-destroy{{$comment->id}}">
 @csrf
 @method('delete')
-<span class="fas fa-trash" style="color: red; cursor: pointer;"
-onclick="event.preventDefault();
+
+<a href="" onclick="event.preventDefault();
 if(confirm('Do you really want to delete?')){
-document.getElementById('answer-destroy')
-.submit() }"></span>
+document.getElementById('comment-destroy{{$comment->id}}')
+.submit() }"><small>delete</small></a>
+
 </form>
 </div>
+
 @endif
 @endif
+</div>
 
-@foreach ($answer->comments as $comment)
 
-<div style="border-bottom: 1px solid #D3D3D3;width:650px;height:80px" >
-<small >By:{{$comment->user_id}}
-<a href="{{route('users.show' , $question->user_id)}}"> 
-</a></small>
-<br>   
-<small>{{ $comment->body}}</small>
-<br>
 
-@if(auth()->user())
-@if ( $comment->user_id == auth()->user()->id )
-<div class="row">
-<div class="col-1">
-<div class="modal fade" id="modalEditComment" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+
+<div class="modal fade" id="modalEditComment{{$comment->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
 aria-hidden="true">
 <div class="modal-dialog" role="document">
 <div class="modal-content">
@@ -219,72 +277,42 @@ aria-hidden="true">
 </div>
 </div>
 
-<span class="fas fa-edit" style="color: orange; cursor: pointer;"
- data-toggle="modal" data-target="#modalEditComment"  
-></span>
-</div>
-
-
-
-
-<div class="col-1">
-
-<form  method="post" action="{{route('comments.destroy' , $comment->id)}}"
-id="comment-destroy">
-@csrf
-@method('delete')
-<span class="fas fa-trash" style="color: red; cursor: pointer;"
- onclick="event.preventDefault();
-if(confirm('Do you really want to delete?')){
-document.getElementById('comment-destroy')
-.submit() }"  
-></span>
-</form>
-
-
-
-</div>
-</div>
-</div>
-<br>
-@endif
-@endif
-@endforeach
-</div>
-<br>
-<br>
-
 
 @endforeach
-
-<!-- Quick Reply -->
-<div class="form-group" style="width:650px; padding-left:25px;"   >
-@if(auth()->user())
-<form action="{{route('questions.addAnswer' , $question->id)}}" method="post">
-@csrf
-<label for="quickReplyFormComment" style="padding-top:15px;">Your Answer</label>
-<textarea class="form-control" id="quickReplyFormComment" rows="5" name="answer[]" required></textarea>
-
-<div class="text-center">
-<button class="btn btn-info btn-sm" type="submit" >Post</button>
-</div>
-</form>
-@else
-<h4> Sign in to post an answer</h4>
-@endif
-</div>
-
+@endforeach
+{{ $answers->links() }}
+    <!-- Quick Reply -->
     
+    <div class="form-group mt-4" >
+    @if(auth()->user())
+    <form action="{{route('questions.addAnswer' , $question->id)}}" method="post">
+    @csrf
+    <label for="quickReplyFormComment">Your Answer</label>
+    <textarea class="form-control" id="quickReplyFormComment" rows="5" name="answer[]" required></textarea>
+
+    <div class="text-center">
+        <button class="btn btn-info btn-sm" type="submit" >Post</button>
+    </div>
+    </form>
+    @else
+    <h4> Sign in to post an answer</h4>
+    @endif
+    </div>
     
-</div>
-</div>
-</div>
 
 
-</div>
-</div>
-<!--/.Comments-->
-@endsection
+    <div class="media d-block d-md-flex mt-3">
+                                    
+                                    
+    </div>
+    </div>
+    </div>
+                        
+
+    </div>
+    </div>
+    <!--/.Comments-->
+    @endsection
 
 
 

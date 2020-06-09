@@ -25,10 +25,8 @@ class AnswerController extends Controller
     {
         
         
-        //$userId= auth()->user()->id;
-           
-
-        Comment::create(['body'=> $request->body,  'answer_id'=>$id]);
+        $userId= auth()->user()->id;
+        Comment::create(['body'=> $request->body,  'user_id'=>$userId , 'answer_id'=>$id  ]);
         return redirect()->back();
 
         
@@ -41,9 +39,9 @@ class AnswerController extends Controller
         
         Comment::where('id' , $id)->update(['body'=> $request->body]);
         return redirect()->back();
-
-
-
-        
+   
     }
+
+
+
 }

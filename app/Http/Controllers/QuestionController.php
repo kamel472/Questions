@@ -7,6 +7,7 @@ use App\Http\Requests\QuestionStoreRequest;
 use App\Question;
 use App\Answer;
 use App\User;
+use App\Comment;
 use Validator;
 
 class QuestionController extends Controller
@@ -23,8 +24,9 @@ class QuestionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {   $questions = Question::all();
-        return view ('questions.index' , compact('questions'));
+    {   $questions = Question::paginate(10);
+        $questionsCount = Question::all()->count();
+        return view ('questions.index' , compact('questions' , 'questionsCount'));
     }
 
     /**
@@ -69,7 +71,10 @@ class QuestionController extends Controller
         
         $userAsked = $question->user;
 
-        return view('questions.show' , compact('question' , 'userAsked' ));
+        $answers= $question->answers()->paginate(10);
+
+
+        return view('questions.show' , compact('question' , 'userAsked' , 'answers'  ));
     }
 
     /**
@@ -90,11 +95,14 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+   
     public function update(Request $request, Question $question)
     {
+        
         $question->update(['title'=> $request->title , 'text'=> $request->text ]);
         return redirect()->route('questions.show', ['question' => $question->id]); 
     }
+    
 
     /**
      * Remove the specified resource from storage.
@@ -104,6 +112,13 @@ class QuestionController extends Controller
      */
     public function destroy(Question $question)
     {
+        
+       foreach ($question->answers as $answer){
+        
+        $answer->comments->each->delete();
+        
+       }
+        
         $question->answers->each->delete();
         $question->delete();
 
@@ -119,7 +134,8 @@ class QuestionController extends Controller
             $userId= auth()->user()->id;
            
 
-            Answer::create(['body'=> $answer , 'user_id'=> $userId , 'question_id'=>$id]);
+            Answer::create(['body'=> $answer , 'user_id'=> $userId , 'question_id'=>$id , 
+            'approved'=>0 , 'rating'=>0]);
             return redirect()->back();
 
         }

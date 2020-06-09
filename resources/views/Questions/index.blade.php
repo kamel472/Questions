@@ -10,12 +10,12 @@
 <!--Card content-->
 <div class="card-header" style=" padding-bottom:2px;" >
 <h3 style="font-family:Impact;">Questions</h3>
-<p >{{$questions->count()}} Questions Asked</p>
+<p >{{$questionsCount}} Questions Asked</p>
 </div>
 <x-alert/>
 
 <div class="card-body" >
-@foreach ($questions as $question)
+@foreach ($questions->sortByDesc('created_at') as $question)
 <div style="border-bottom: 1px solid #D3D3D3; padding:5px;" >
 <small >Asked By:
 <a href="{{route('users.show' , $question->user_id)}}"> 
@@ -43,6 +43,7 @@
 <br>
 @endforeach 
 </div>
+{{ $questions->links() }}
 
 <!--/.Card-->
 @endsection
