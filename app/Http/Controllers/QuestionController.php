@@ -101,7 +101,7 @@ public function update(Request $request, Question $question)
 
     $request->validate([
         'title' => ['required', 'max:100'],
-        'body' => ['required']
+        'text' => ['required']
     ]);
     $question->update(['title'=> $request->title , 'text'=> $request->text ]);
     return redirect()->route('questions.show', ['question' => $question->id])
@@ -119,6 +119,7 @@ public function destroy(Question $question)
 {
 
 foreach ($question->answers as $answer){
+    $answer->likes->each->delete();
     $answer->comments->each->delete();
 }
 

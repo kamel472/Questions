@@ -37,6 +37,8 @@ Route::patch('answers/{id}' , 'AnswerController@updateComment' )->name('answers.
 
 Route::delete('/comments/{comment}', 'CommentController@destroy')->name('comments.destroy');
 
+Route::post('/like', 'AnswerController@postLike')->name('like');
+
 
 
 

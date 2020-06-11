@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Question extends Model
 {
     protected $fillable = [
-        'title', 'text','user_id'
+        'title', 'text','user_id','answers_no'
     ];
 
     public function answers()
@@ -19,6 +19,8 @@ class Question extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    
 
     
 }

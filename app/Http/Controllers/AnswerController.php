@@ -15,6 +15,7 @@ class AnswerController extends Controller
     public function destroy( Answer $answer )
     {
         $answer->comments->each->delete();
+        $answer->likes->each->delete();
         $answer->delete();
         return redirect()->back()->with('message' , 'Answer Deleted');
 
@@ -48,6 +49,56 @@ class AnswerController extends Controller
         return redirect()->back()->with('message' , 'Comment updated');
    
     }
+
+    /**public function postLike (Request $request)
+    {
+        $answerId = $request['answerId'];
+        $isLike = $request['isLike']===true;
+        $update = false;
+        $answer = Answer::find($answerId);
+
+        if(!$answer){
+            return null;
+        }
+
+        $user = Auth::user();
+        $like = $user->likes()->where('answer_id' , $answerId)->first();
+
+        if($like){
+
+            $alreadyLike = $like->like;
+            $update=true;
+
+            // if I clicked like
+
+            if ($alreadyLike == $isLike ){
+
+                $like->delete();
+                return null;
+
+            }
+
+        }else{
+
+            $like = New Like();
+        }
+
+        $like->like = $isLike;
+        $like->user_id = $user->id;
+        $like->answer_id = $answer->id;
+
+        if ($update){
+            
+            $like->update();
+        }else{
+            $like->save();
+        }
+
+        return null;
+
+        
+   
+    }**/
 
 
 

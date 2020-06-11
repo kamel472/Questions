@@ -29,7 +29,7 @@
 
 @if($question->user_id == auth()->user()->id)
 <div class="col-1">
-<span class="fas fa-edit" style="color: orange; " 
+<span class="fas fa-edit" style="color: orange; cursor: pointer;" 
 data-toggle="modal" data-target="#modalEditQuestion{{$question->id}}"></span>
 </div>
 
@@ -51,6 +51,7 @@ aria-hidden="true">
 <i class="fas fa-pencil prefix grey-text"></i>
 <input type="text" id="form8" value="{{$question->title}}"name="title" class="md-textarea form-control" 
 rows="4" required></input>
+</br>
 <textarea type="text" id="form8" value=""name="text" class="md-textarea form-control" 
 rows="4" required>{{$question->text}}</textarea>
 <label data-error="wrong" data-success="right" for="form8"></label>
@@ -92,7 +93,8 @@ document.getElementById('question-destroy')
 
 
 @foreach($answers->sortByDesc('created_at') as $answer)                            
-<div class="row" style="border-bottom: 1px solid rgb(184, 170, 170); padding:25px;" >
+<div class="row" data-answerid= "{{$answer->id}}"
+style="border-bottom: 1px solid rgb(184, 170, 170); padding:25px;" >
 
 <div class="col-1" >   
 @if(auth()->user()->id == $question->user_id)
@@ -103,11 +105,13 @@ document.getElementById('question-destroy')
 @else
 <i class="fa fa-check" aria-hidden="true" ></i>
 @endif
-@endif   
+@endif
+</br>
+<livewire:counter :answer="$answer">    
 </div>
 
-<div class="col-8"  >
-<p><img src="{{ asset('images/A.jpg') }}" alt="image" style="width:15px;">   {{$answer->body}}</p>
+<div class="col-8" style="width:500px;">
+<p><img src="{{ asset('images/A.jpg') }}" alt="image" style="width:15px;">{{$answer->body}}</p>
 <div style="background-color: rgb(233, 240, 241); width: fit-content;height: 30px;">
 <small >
 <a href="{{route('users.show' , $answer->user_id)}}"> 
@@ -116,9 +120,51 @@ document.getElementById('question-destroy')
 @else
 <img src="{{ asset('storage/images/default.png') }}" alt="image" style="width:20px;">
 @endif
-
 {{ $answer->user->name}}</a></small></div>
 </div>
+
+<!--  
+<div>
+    <a href="#" class="like">like</a>
+    <a href="#" class="like">dislike</a>
+
+  <script>
+
+        jQuery('.like').click( function(event){
+            event.preventDefault();
+            answerid=event.target.parentNode.parentNode.dataset['answerid'];
+            var isLike = event.target.previousElementSibling==null;
+            
+            jQuery.ajaxSetup({
+                headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('body') }
+            });
+            
+            jQuery.ajax({
+                method: "POST",
+                url: "{{route('like')}}",
+                data: {isLike:isLike ,answerId= answerid, 
+                }
+
+                
+
+
+            })
+
+            .done(function(){
+
+                //
+            });
+            
+            
+
+        });
+    </script> 
+</div>
+-->
+
+
+
+
 
 @if(auth()->user())
 <div class="col-1">

@@ -28,7 +28,11 @@
 
 @livewireStyles
 
+<script>
 
+
+    
+</script>
 
 </head>
 
