@@ -14,47 +14,31 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+
 Route::resource('questions', 'QuestionController');
-Route::patch('questions/updateAnswer/{id}' , 'QuestionController@updateAnswer' )->name('questions.updateAnswer');
-Route::post('questions/addAnswer/{id}' , 'QuestionController@addAnswer' )->name('questions.addAnswer');
-
-
-
-
+Route::patch('questions/updateAnswer/{id}','QuestionController@updateAnswer')
+->name('questions.updateAnswer');
+Route::post('questions/addAnswer/{id}' , 'QuestionController@addAnswer' )
+->name('questions.addAnswer');
 
 
 
 Route::delete('/answers/{answer}', 'AnswerController@destroy')->name('answers.destroy');
-Route::patch('/answers/{id}', 'AnswerController@update')->name('answers.update');
 Route::patch('/answers/{answer}', 'AnswerController@approve')->name('answers.approve');
 Route::post('answers/{id}' , 'AnswerController@addComment' )->name('answers.addComment');
-Route::patch('answers/{id}' , 'AnswerController@updateComment' )->name('answers.updateComment');
+Route::patch('/answers/{answer}', 'AnswerController@update')->name('answers.update');
 
-
-
-
-
-
+Route::patch('/comments/{id}', 'CommentController@update')->name('comments.update');
 Route::delete('/comments/{comment}', 'CommentController@destroy')->name('comments.destroy');
 
-Route::post('/like', 'AnswerController@postLike')->name('like');
-
-
-
-
-
+Route::POST('rating', 'RatingController@create')->name('rating');
 
 Route::resource('users', 'UserController');
 
-
-
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
-
 
 Route::get('/home', 'HomeController@index')->name('home');
 
 Auth::routes();
-
-

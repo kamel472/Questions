@@ -3,11 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Rating;
 
 class Answer extends Model
 {
     protected $fillable = [
-        'body', 'question_id', 'user_id','approved','rating'
+        'body', 'question_id', 'user_id','approved'
     ];
 
     public function user() {
@@ -24,6 +25,9 @@ class Answer extends Model
         return $this->hasMany('App\Like');
     }
 
-    
+    public function ratings()
+    {
+        return $this->hasMany('App\Rating');
+    }
     
 }

@@ -10,6 +10,7 @@ use App\User;
 use App\Comment;
 use Validator;
 
+
 class QuestionController extends Controller
 {
 
@@ -23,11 +24,35 @@ $this->middleware('auth')->except('index');
  *
  * @return \Illuminate\Http\Response
  */
-public function index()
-{   
-    $questions = Question::paginate(5);
+public function index(request $request)
+
+
+{  
     $questionsCount = Question::all()->count();
+    
+if($request->query('arrange') == 'mostAnswered'){
+    
+    $questions = Question::withCount('answers')->orderBy('answers_count', 'desc')
+    ->paginate(1)->withPath('questions?arrange=mostAnswered');
     return view ('questions.index' , compact('questions' , 'questionsCount'));
+
+} 
+
+elseif ($request->query('arrange') == 'mostRecent'){
+
+    $questions = Question::orderBy('created_at', 'desc')->paginate(1)
+    ->withPath('questions?arrange=mostRecent');
+    return view ('questions.index' , compact('questions' , 'questionsCount'));
+    
+}
+
+else{
+
+    $questions = Question::orderBy('created_at', 'desc')->paginate(1);
+    return view ('questions.index' , compact('questions' , 'questionsCount'));
+    
+}
+    
 }
 
 /**
@@ -120,6 +145,7 @@ public function destroy(Question $question)
 
 foreach ($question->answers as $answer){
     $answer->likes->each->delete();
+    $answer->ratings->each->delete();
     $answer->comments->each->delete();
 }
 
@@ -145,15 +171,6 @@ foreach ($request->answer as $answer){
 
 }    
 
-public function updateAnswer (Request $request, $id)
-{
 
-    $request->validate([
-        'body' => ['required']
-    ]);
-
-    Answer::where('id' , $id)->update(['body'=> $request->body]);
-    return redirect()->back()->with('message' , 'Answer updated '); 
-}
 
 }

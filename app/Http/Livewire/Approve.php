@@ -12,24 +12,21 @@ class Approve extends Component
     public $answerId;
     
 
-    public function mount($answer)
-    {
+    public function mount($answer){
         
       $this->approved = $answer->approved;
       $this->answerId = $answer->id;
       
-        
     }
 
 
-    public function approve()
-    {
+    public function approve(){
+
         Answer::where('id' , $this->answerId)->update(['approved' => 1]);
            
     }
     
-    public function render()
-    {
+    public function render(){
 
         $answers = Answer::where('id' , $this->answerId)->get();
         foreach ($answers as $answer) {

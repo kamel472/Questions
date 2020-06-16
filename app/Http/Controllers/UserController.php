@@ -96,6 +96,7 @@ class UserController extends Controller
         $image->storeAs('images', $fileUniqueName , 'public');
             $user->update(['name'=>$name , 'email'=>$email , 'avatar'=>$fileUniqueName]);
         }
+        
         else{
 
             $user->update(['name'=>$name , 'email'=>$email]);

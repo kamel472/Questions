@@ -6,7 +6,7 @@ use Livewire\Component;
 use App\Answer;
 use App\Like;
 
-class Counter extends Component
+class Likes extends Component
 {
     public $answer;
     public $answerId;
@@ -14,8 +14,7 @@ class Counter extends Component
     public $like;
     
 
-    public function mount($answer)
-    {
+    public function mount($answer){
           
       $this->answer = $answer;
       $this->answerId = $answer->id;
@@ -24,9 +23,8 @@ class Counter extends Component
     }
 
 
-    public function liked()
-    
-    {
+    public function liked(){
+
         $this->like = 1;
         $answer = $this->answer;
         $like = $answer->likes->where('user_id' , $this->userId)->first();
@@ -44,8 +42,7 @@ class Counter extends Component
         }      
     }
     
-    public function disliked()
-    {
+    public function disliked(){
 
         $this->like = 0;
         $answer = $this->answer;
@@ -58,13 +55,10 @@ class Counter extends Component
         } 
     }
 
-
-    public function render()
-    {
+    public function render(){
         
         $likes = Like::where('answer_id' , $this->answerId)->sum('like');
-        return view('livewire.counter' , ['likes' => $likes]);
-              
+        return view('livewire.likes' , ['likes' => $likes]);              
     }
 
 }
