@@ -9,7 +9,20 @@ use App\Comment;
 class AnswerController extends Controller
 {
     
+    public function store (Request $request, $id){
     
+        $request->validate([
+            'body' => ['required']
+        ]);
+
+    $userId= auth()->user()->id;
+
+    Answer::create(['body'=> $request->body , 'user_id'=> $userId , 'question_id'=>$id , 
+    'approved'=>0 , 'rating'=>0]);
+    return redirect()->back()->with('message' , 'Answer Added');
+
+    }  
+
     public function update (Request $request, Answer $answer) {
 
         $request->validate([
@@ -21,26 +34,10 @@ class AnswerController extends Controller
     }
     
     public function destroy( Answer $answer ){
-        $answer->ratings->each->delete();
-        $answer->comments->each->delete();
-        $answer->likes->each->delete();
+    
         $answer->delete();
         return redirect()->back()->with('message' , 'Answer Deleted');
 
-
     }
-
-    public function addComment (Request $request, $id){        
-        $request->validate([
-            
-            'body' => ['required']
-        ]);
-
-        $userId= auth()->user()->id;
-        Comment::create(['body'=> $request->body,  'user_id'=>$userId , 'answer_id'=>$id  ]);
-        return redirect()->back()->with('message' , 'comment posted');
-
-    }    
-
-        
+       
 }

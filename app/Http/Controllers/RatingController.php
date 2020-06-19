@@ -13,20 +13,12 @@ class RatingController extends Controller
         $rating = $request->ratings;
         $userId = Auth()->user()->id;
     
+        $rating = Rating::updateOrCreate(
+            ['answer_id' => $answerId, 'user_id' => $userId],
+            ['rating' => $rating]
+        );
 
-        if (Rating::where('answer_id', $answerId)->where('user_id' , $userId)->exists()) {
-            
-            Rating::where('answer_id', $answerId)
-            ->where('user_id' , $userId)
-            ->update(['answer_id'=> $answerId, 'user_id'=>$userId , 'rating'=> $rating ]);
+        return ('Rating Saved');
 
-        } 
-        
-        else { 
-    
-            Rating::create(['answer_id'=> $answerId , 'user_id'=>$userId , 'rating'=> $rating ]);
-        } 
-
-            return ('Rating Saved');
-        }
+    }
 }

@@ -8,8 +8,20 @@ use App\Comment;
 class CommentController extends Controller
 {
     
-    public function update (Request $request , $id)
-    {
+    public function store (Request $request, $id){        
+        
+        $request->validate([
+            
+            'body' => ['required']
+        ]);
+
+        $userId= auth()->user()->id;
+        Comment::create(['body'=> $request->body,  'user_id'=>$userId , 'answer_id'=>$id  ]);
+        return redirect()->back()->with('message' , 'comment posted');
+
+    }  
+    
+    public function update (Request $request , $id){
         
         $request->validate([
             
@@ -21,11 +33,10 @@ class CommentController extends Controller
    
     }
 
-    public function destroy( Comment $comment )
-    {
+    public function destroy( Comment $comment ){
+
         $comment->delete();
         return redirect()->back()->with('message' , 'Comment Deleted');
-
-
     }
+
 }

@@ -8,6 +8,7 @@ use App\Question;
 use App\Answer;
 use App\User;
 use App\Comment;
+use Illuminate\Support\Str;
 use Validator;
 
 
@@ -28,27 +29,28 @@ public function index(request $request)
 
 
 {  
-    $questionsCount = Question::all()->count();
-    
+
+$questionsCount = Question::all()->count();
+$questionsPerPage = 2;
+
 if($request->query('arrange') == 'mostAnswered'){
     
     $questions = Question::withCount('answers')->orderBy('answers_count', 'desc')
-    ->paginate(1)->withPath('questions?arrange=mostAnswered');
+    ->paginate($questionsPerPage);
     return view ('questions.index' , compact('questions' , 'questionsCount'));
 
 } 
 
 elseif ($request->query('arrange') == 'mostRecent'){
 
-    $questions = Question::orderBy('created_at', 'desc')->paginate(1)
-    ->withPath('questions?arrange=mostRecent');
+    $questions = Question::orderBy('created_at', 'desc')->paginate($questionsPerPage);
     return view ('questions.index' , compact('questions' , 'questionsCount'));
     
 }
 
 else{
 
-    $questions = Question::orderBy('created_at', 'desc')->paginate(1);
+    $questions = Question::orderBy('created_at', 'desc')->paginate($questionsPerPage);
     return view ('questions.index' , compact('questions' , 'questionsCount'));
     
 }
@@ -95,8 +97,13 @@ public function show(Question $question)
 {
 
     $userAsked = $question->user;
-    $answers= $question->answers()->paginate(5);
-    return view('questions.show' , compact('question' , 'userAsked' , 'answers'  ));
+    $answers= $question->answers()->orderBy('created_at' , 'Desc')->paginate(5);
+
+    //foreach ($answers as $answer){
+
+      //  $comments = $answer->comments->sortByDesc('created_at');
+    //}
+    return view('questions.show' , compact('question' , 'userAsked' , 'answers'   ));
 }
 
 /**
@@ -107,9 +114,6 @@ public function show(Question $question)
  */
 public function edit(Question $question)
 {
-     
-    
-
     return view('questions.edit' , compact ('question') );
 }
 
@@ -142,34 +146,13 @@ public function update(Request $request, Question $question)
  */
 public function destroy(Question $question)
 {
-
-foreach ($question->answers as $answer){
-    $answer->likes->each->delete();
-    $answer->ratings->each->delete();
-    $answer->comments->each->delete();
-}
-
-    $question->answers->each->delete();
     $question->delete();
 
     return redirect('questions/')->with('message' , 'Question deleted');
 
-
 }
 
-public function addAnswer (Request $request, $id)
-{
-foreach ($request->answer as $answer){
-
-
-    $userId= auth()->user()->id;
-    Answer::create(['body'=> $answer , 'user_id'=> $userId , 'question_id'=>$id , 
-    'approved'=>0 , 'rating'=>0]);
-    return redirect()->back()->with('message' , 'Answer Added');
-
-}
-
-}    
+  
 
 
 

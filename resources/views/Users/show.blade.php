@@ -40,12 +40,13 @@ E-mail: {{$user->email}}
 <h5 style="border-top: 1px solid #D3D3D3;padding-top:20px">Questions Asked:</h5>
 <br>
 <ul> 
-@foreach($user->questions as $question)
 
+@foreach ($userQuestions as $userQuestion)
 <li>
-<small ><a href="{{route('questions.show' , $question->id)}}">{{ $question->title}}</a> </small> </li>
-
+<small ><a href="{{route('questions.show' , $userQuestion->id)}}">{{ $userQuestion->title}}</a> </small> </li>
 @endforeach
+
+{{$userQuestions }}
 </ul>
 
 

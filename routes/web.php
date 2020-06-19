@@ -16,20 +16,21 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::resource('questions', 'QuestionController');
-Route::patch('questions/updateAnswer/{id}','QuestionController@updateAnswer')
-->name('questions.updateAnswer');
-Route::post('questions/addAnswer/{id}' , 'QuestionController@addAnswer' )
-->name('questions.addAnswer');
 
+Route::prefix('answers')->group(function () {
 
+        Route::post('/{id}', 'AnswerController@store')->name('answers.store');
+        Route::delete('/{answer}', 'AnswerController@destroy')->name('answers.destroy');
+        Route::patch('/{answer}', 'AnswerController@approve')->name('answers.approve');
+        Route::patch('/{answer}', 'AnswerController@update')->name('answers.update');
+});
 
-Route::delete('/answers/{answer}', 'AnswerController@destroy')->name('answers.destroy');
-Route::patch('/answers/{answer}', 'AnswerController@approve')->name('answers.approve');
-Route::post('answers/{id}' , 'AnswerController@addComment' )->name('answers.addComment');
-Route::patch('/answers/{answer}', 'AnswerController@update')->name('answers.update');
+Route::prefix('comments')->group(function () {
 
-Route::patch('/comments/{id}', 'CommentController@update')->name('comments.update');
-Route::delete('/comments/{comment}', 'CommentController@destroy')->name('comments.destroy');
+        Route::post('/{id}', 'CommentController@store')->name('comments.store');
+        Route::patch('/{id}', 'CommentController@update')->name('comments.update');
+        Route::delete('/{comment}', 'CommentController@destroy')->name('comments.destroy');
+});
 
 Route::POST('rating', 'RatingController@create')->name('rating');
 

@@ -35,5 +35,5 @@
 @endforeach 
 </div>
 
-{{ $questions->links() }}
+{{ $questions->withQueryString()->links() }}
 @endsection
