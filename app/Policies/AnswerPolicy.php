@@ -19,4 +19,14 @@ class AnswerPolicy
     {
         return $user->id === $answer->user_id;
     }
+
+    public function rate (User $user, Answer $answer)
+    {
+        return $answer->ratings()->where ('user_id' , $user->id)->count() == 0
+        && $user->id !== $answer->user_id ;
+        
+    }
+
+
+
 }

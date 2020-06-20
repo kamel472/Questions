@@ -27,6 +27,15 @@
 
                             ratings = value;
                         });
+
+                        var rating = document.getElementsByClassName('rating');
+                        for(var i=0; i<rating.length; i++){
+                            $(rating[i]).starrr({
+                                readOnly:true,
+                                rating: rating[i].getAttribute("data-rating")
+
+                            });
+                        }
                     });
 
                     function saveRatings(form) {
@@ -48,7 +57,10 @@
                                 alert(response);
                             }
                         });
+                        reload();
                         return false;
+                        
                     }
+                    
 
                 

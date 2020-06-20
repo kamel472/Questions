@@ -36,6 +36,7 @@
 
             
             @can('updateOrDelete', $question)
+
             <!--Edit Question Button/Modal-->
             @include('includes.editQuestion')
 
@@ -122,20 +123,26 @@
                             </div>
 
                             <!--Answer User Rating-->
-                            <div class="col-3">
+                            <div class="col-4">
+                                @can('rate' , $answer)
                                 <form method="GET" onsubmit="return saveRatings(this);">
-                                    @csrf
                                     <input type="hidden" name="answer_id" value="{{$answer->id}}">
-                                    <button class="btn btn-primary btn-sm">Rate</button>
-                                    <div class="starrr"></div>
+                                    <button class="btn btn-primary btn-sm">Submit</button>
+                                    <div class="starrr" ></div>
                                 </form>
+                                @endcan
                             </div>
                             <!--Answers Avarage Rating -->
-                            <div class="col-3">
-                                <i class="fa fa-star" aria-hidden="true" style="color: blue" ;>
+                            <div class="col-2">
+
+                                <div class="rating" data-rating="{{$answer->ratings->where('answer_id' , $answer->id)->avg('rating')}}"></div>
+
+                                <!--<small style="color: blue;font-weight: bold;" >Rating: <i class="fa fa-star" aria-hidden="true" ;>
                                     {{round($answer->ratings->where('answer_id' , $answer->id)->avg('rating') , 1)}}
-                                </i>
+                                </i></small>-->
                             </div>
+
+
                             <br><br>
                         </div>
                     </div>
