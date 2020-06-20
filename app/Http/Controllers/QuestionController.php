@@ -10,150 +10,139 @@ use App\User;
 use App\Comment;
 use Illuminate\Support\Str;
 use Validator;
+use Illuminate\Support\Facades\Gate;
 
 
 class QuestionController extends Controller
 {
 
-public function __construct()
-{
-$this->middleware('auth')->except('index');
-}
+    public function __construct(){
 
-/**
- * Display a listing of the resource.
- *
- * @return \Illuminate\Http\Response
- */
-public function index(request $request)
+        $this->middleware('auth')->except('index');
+    }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(request $request){  
 
-{  
+    $questionsCount = Question::all()->count();
+    $questionsPerPage = 2;
 
-$questionsCount = Question::all()->count();
-$questionsPerPage = 2;
+        if($request->query('arrange') == 'mostAnswered'){
+            
+            $questions = Question::withCount('answers')->orderBy('answers_count', 'desc')
+            ->paginate($questionsPerPage);
+            return view ('questions.index' , compact('questions' , 'questionsCount'));
 
-if($request->query('arrange') == 'mostAnswered'){
-    
-    $questions = Question::withCount('answers')->orderBy('answers_count', 'desc')
-    ->paginate($questionsPerPage);
-    return view ('questions.index' , compact('questions' , 'questionsCount'));
+        } 
 
-} 
+        elseif ($request->query('arrange') == 'mostRecent'){
 
-elseif ($request->query('arrange') == 'mostRecent'){
+            $questions = Question::orderBy('created_at', 'desc')->paginate($questionsPerPage);
+            return view ('questions.index' , compact('questions' , 'questionsCount'));
+            
+        }
 
-    $questions = Question::orderBy('created_at', 'desc')->paginate($questionsPerPage);
-    return view ('questions.index' , compact('questions' , 'questionsCount'));
-    
-}
+        else{
 
-else{
+            $questions = Question::orderBy('created_at', 'desc')->paginate($questionsPerPage);
+            return view ('questions.index' , compact('questions' , 'questionsCount'));
+            
+        }
+        
+    }
 
-    $questions = Question::orderBy('created_at', 'desc')->paginate($questionsPerPage);
-    return view ('questions.index' , compact('questions' , 'questionsCount'));
-    
-}
-    
-}
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create(request $request){
 
-/**
- * Show the form for creating a new resource.
- *
- * @return \Illuminate\Http\Response
- */
-public function create(request $request)
-{
+        return view ('questions.create');
+    }
 
-    return view ('questions.create');
-}
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(request $request){
 
-/**
- * Store a newly created resource in storage.
- *
- * @param  \Illuminate\Http\Request  $request
- * @return \Illuminate\Http\Response
- */
-public function store(request $request)
-{
+        $request->validate([
 
-    $request->validate([
-        'title' => ['required', 'max:100'],
-        'text' => ['required']
-    ]);
+            'title' => ['required', 'max:100'],
+            'text' => ['required']
+        ]);
 
-    auth()->user()->questions()->create($request->all());
-    return redirect('questions/')->with('message' , 'Question posted');
+        auth()->user()->questions()->create($request->all());
+        return redirect('questions/')->with('message' , 'Question posted');
 
-}
+    }
 
-/**
- * Display the specified resource.
- *
- * @param  int  $id
- * @return \Illuminate\Http\Response
- */
-public function show(Question $question)
-{
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Question $question){
 
-    $userAsked = $question->user;
-    $answers= $question->answers()->orderBy('created_at' , 'Desc')->paginate(5);
+        $userAsked = $question->user;
+        $questionsPerPage = 5;
+        $answers= $question->answers()->orderBy('created_at' , 'Desc')->paginate($questionsPerPage);
 
-    //foreach ($answers as $answer){
+        return view('questions.show' , compact('question' , 'userAsked' , 'answers'));
+    }
 
-      //  $comments = $answer->comments->sortByDesc('created_at');
-    //}
-    return view('questions.show' , compact('question' , 'userAsked' , 'answers'   ));
-}
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Question $question){
+        //
+    }
 
-/**
- * Show the form for editing the specified resource.
- *
- * @param  int  $id
- * @return \Illuminate\Http\Response
- */
-public function edit(Question $question)
-{
-    return view('questions.edit' , compact ('question') );
-}
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
 
-/**
- * Update the specified resource in storage.
- *
- * @param  \Illuminate\Http\Request  $request
- * @param  int  $id
- * @return \Illuminate\Http\Response
- */
+    public function update(Request $request, Question $question){
 
-public function update(Request $request, Question $question)
-{
+            $request->validate([
 
-    $request->validate([
-        'title' => ['required', 'max:100'],
-        'text' => ['required']
-    ]);
-    $question->update(['title'=> $request->title , 'text'=> $request->text ]);
-    return redirect()->route('questions.show', ['question' => $question->id])
-    ->with('message' , 'Question updated '); 
-}
+                'title' => ['required', 'max:100'],
+                'text' => ['required']
+            ]);
+
+            $question->update(['title'=> $request->title , 'text'=> $request->text ]);
+            return redirect()->route('questions.show', ['question' => $question->id])
+            ->with('message' , 'Question updated '); 
+        
+    }
 
 
-/**
- * Remove the specified resource from storage.
- *
- * @param  int  $id
- * @return \Illuminate\Http\Response
- */
-public function destroy(Question $question)
-{
-    $question->delete();
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Question $question){
 
-    return redirect('questions/')->with('message' , 'Question deleted');
+        $question->delete();
+        return redirect('questions/')->with('message' , 'Question deleted');
 
-}
-
-  
-
-
+    }
 
 }

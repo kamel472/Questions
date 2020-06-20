@@ -18,11 +18,11 @@
 
 E-mail: {{$user->email}}
 <br><br><br>
-@if(auth()->user())
+
 @if ($user->id == auth()->user()->id)
 <a  href="{{route('users.edit' , $user->id )}}" class="btn btn-success btn-sm">Update profile</a>
 @endif
-@endif
+
 </div>
 
 <div class="col-5">

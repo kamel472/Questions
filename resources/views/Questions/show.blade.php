@@ -15,12 +15,14 @@
                 <p class="h5 "><img src="{{ asset('images/Q.png') }}" alt="image" style="width:18px;">
                     {{$question->title}}
                 </p>
+
                 <p>{{$question->text}}</p>
 
                 <!--User Asked-->
                 <div style="background-color: rgb(233, 240, 241); width: fit-content;height: 30px;">
                     <small>
                         <a href="{{route('users.show' , $question->user_id)}}">
+
                             @if($question->user->avatar)
                             <img src="{{ asset('storage/images/'.$question->user->avatar) }}" alt="image"
                                 style="width:20px;">
@@ -32,8 +34,8 @@
                 </div>
             </div>
 
-            @if($question->user_id == auth()->user()->id)
             
+            @can('updateOrDelete', $question)
             <!--Edit Question Button/Modal-->
             @include('includes.editQuestion')
 
@@ -45,7 +47,7 @@
                     <span class="fas fa-trash" style="color: red; cursor: pointer;" onclick="questionDelete(this)"></span>
                 </form>
             </div>
-            @endif
+            @endcan
         </div>
     </div>
 </div>
@@ -63,16 +65,17 @@
 
                     <!--Approve Answer-->
                     <div class="col-1">
-                        @if(auth()->user()->id == $question->user_id)
+
+                        @can('approveAnswer', $question)
                         <livewire:approve :answer="$answer">
                             @else
                             @if($answer->approved == 1)
                             <i class="fa fa-check" aria-hidden="true" style="color: green;"></i>
                             @else
-                            <i class="fa fa-check" aria-hidden="true"></i>
+                            <i class="fa fa-check" aria-hidden="true" style="color: rgb(184, 170, 170)"></i>
 
                             @endif
-                            @endif
+                            @endcan
                             </br>
 
                             <!--Like Answer-->
@@ -86,7 +89,7 @@
                         <!--Add Comment Button/Modal-->    
                         @include('includes.addComment')
 
-                            @if($answer->user->id == auth()->user()->id)
+                            @can('updateOrDelete', $answer)
 
                             <!--Edit Answer Button/Modal-->
                             @include('includes.editAnswer')
@@ -99,8 +102,7 @@
                                 @method('delete')
                                 <a  href="" onclick="answerDelete(this)"><small>Delete</small></a>
                             </form>
-                            @include('includes.scripts')
-                            @endif
+                            @endcan
                         </div>
                         <br>
                         <!--User Answered-->
@@ -147,7 +149,7 @@
                         </a></small>
                     <br>
 
-                    @if ($comment->user->id == auth()->user()->id)
+                    @can('updateOrDelete' , $comment)
 
                     <!--Edit Comment Button/Modal-->
                    @include ('includes.editComment')
@@ -160,7 +162,7 @@
                             <a href="" onclick="commentDelete(this)"><small>Delete</small></a>
                         </form>
                     </div>
-                    @endif
+                    @endcan
                 </div>
                 
                 @endforeach
