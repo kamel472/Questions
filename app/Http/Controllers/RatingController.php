@@ -18,7 +18,7 @@ class RatingController extends Controller
             ['rating' => $rating]
         );
 
-        return ('Rating Saved');
+        return ('You Rating Is Saved');
 
     }
 }
