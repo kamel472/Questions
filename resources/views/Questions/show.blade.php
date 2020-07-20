@@ -132,9 +132,9 @@
                             </div>
                             
                             <!--Answers Avarage Rating -->
-                            <div class="col-2">
+                            <div class="col-2" >
                                 <p style="color:blue;font-weight: bold;font-size:13px">Total Rating</p>
-                                <div class="rating" data-rating="{{$answer->ratings->where('answer_id' , $answer->id)->avg('rating')}}"></div>
+                                <div class="rating kamel" data-rating="{{$answer->ratings->where('answer_id' , $answer->id)->avg('rating')}}"></div>
                             </div>
                             <br><br>
                         </div>

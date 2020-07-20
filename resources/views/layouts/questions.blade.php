@@ -52,7 +52,7 @@
 
 <!-- Brand -->
 <a class="navbar-brand waves-effect" href="{{'/home'}}">
-<strong style="color:white">Ask.com</strong>
+<strong style="color:white">Ask</strong>
 </a>
 
 <!-- Collapse -->

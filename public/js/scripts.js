@@ -20,6 +20,7 @@ function commentDelete (form) {
 }
 
 var ratings = 0;
+
         
 $(function () {
 
@@ -45,7 +46,9 @@ $(function () {
         }    
     });
     
-    location.reload();
+    // location.reload();
+    // $('.kamel').hide('.kamel');
+    // append
     
     });
     
